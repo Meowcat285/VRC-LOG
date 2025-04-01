@@ -4,8 +4,8 @@ on:
 
 jobs:
   release:
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # env:
+    #   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     strategy:
       fail-fast: false
@@ -34,10 +34,16 @@ jobs:
       - name: Build Release Binary
         run: cargo build --release --target ${{ matrix.target }}
 
-      - name: Upload Release Binary (Windows)
+      - name: Upload Binary Artifact (Windows)
+        uses: actions/upload-artifact@v4 # Use the upload-artifact action
         if: ${{ matrix.runner == 'windows-latest' }}
-        run: gh release upload ${{ github.ref_name }} ./target/${{ matrix.target }}/release/vrc-log.exe --clobber
+        with:
+          name: vrc-log-${{ matrix.target }} # Name for the artifact bundle
+          path: ./target/${{ matrix.target }}/release/vrc-log.exe # Path to the file to upload
 
-      - name: Upload Release Binary (Linux)
+      - name: Upload Binary Artifact (Linux)
+        uses: actions/upload-artifact@v4 # Use the upload-artifact action
         if: ${{ matrix.runner == 'ubuntu-latest' }}
-        run: gh release upload ${{ github.ref_name }} ./target/${{ matrix.target }}/release/vrc-log --clobber
+        with:
+          name: vrc-log-${{ matrix.target }} # Name for the artifact bundle
+          path: ./target/${{ matrix.target }}/release/vrc-log # Path to the file to upload
